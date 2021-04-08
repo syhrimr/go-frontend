@@ -16,6 +16,7 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 	r.GET("/register", renderRegisterPage)
 	r.GET("/login", renderLoginPage)
+	r.GET("/groupchat/list", renderGetJoinedGroupchats)
 	r.Run(":80")
 }
 
@@ -25,6 +26,7 @@ func renderLoginPage(c *gin.Context) {
 		"login.html",
 		gin.H{
 			"title": "Login",
+			"host":  backendHost,
 		},
 	)
 }
@@ -32,6 +34,13 @@ func renderLoginPage(c *gin.Context) {
 func renderRegisterPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "register.html", gin.H{
 		"title": "Register",
+		"host":  backendHost,
+	})
+}
+
+func renderGetJoinedGroupchats(c *gin.Context) {
+	c.HTML(http.StatusOK, "groupchatlist.html", gin.H{
+		"title": "Groupchats",
 		"host":  backendHost,
 	})
 }

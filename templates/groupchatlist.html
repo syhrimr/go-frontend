@@ -1,0 +1,33 @@
+{{ template "header.html" .}}
+<div class="container">
+    <h1>Rooms</h1>
+    <ul class="list-group" id="groupchats"></ul>
+</div>
+</div>
+<script>
+    var host = '{{ .host }}'
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: host + "/joined",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
+            },
+            success: function (data, status, xhr) {
+                var groupchats = data.data;
+                groupchats.forEach(element => {
+                    console.log(element.description)
+                    $("#groupchats").append("<li class='list-group-item'><a href=\"#\">" + element.description + "</a></li>");
+                });
+
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText)
+            },
+            dataType: "json"
+        })
+    })
+
+</script>
+
+{{ template "footer.html" .}}

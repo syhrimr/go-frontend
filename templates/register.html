@@ -18,7 +18,7 @@
                     <label class="form-label">Confirm Password</label>
                     <input type="password" class="form-control" id="confirm-password" name="confirm_password">
                 </div>
-                <input type="hidden" id="host" value="{{ .host}}">
+                <input type="hidden" id="host" value="{{ .account_host}}">
                 <button type="button" class="btn btn-primary" onclick="register()">Register</button>
             </form>
         </div>
@@ -27,16 +27,16 @@
 </div>
 <script>
     function register() {
-        var host = '{{ .host }}'
+        var host = '{{ .account_host }}'
 
         $.ajax({
             type: "POST",
             url: host + "/register",
             data: $('#registerForm').serialize(),
-            success: function (data) {
+            success: function(data) {
                 window.location.href = "/login"
             },
-            error: function (xhr, status, error) {
+            error: function(xhr, status, error) {
                 console.log(xhr.responseText)
             },
             dataType: "json"

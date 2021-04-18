@@ -5,7 +5,7 @@
 
     <div class="row rounded-lg overflow-hidden shadow">
         <!-- Users box-->
-        <div class="col-5 px-0">
+        <div class="col-5 px-0 bg-white">
             <div class="bg-white">
 
                 <div class="bg-gray px-4 py-2 bg-light">
@@ -26,7 +26,7 @@
             <div class="input-group">
                 <input type="text" placeholder="Type a message" id="text-to-send" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
                 <div class="input-group-append">
-                    <button id="button-addon2" type="button" class="btn btn-link" onclick="sendMesageToRoom()"> <i class="fa fa-paper-plane"></i></button>
+                    <button id="button-addon2" type="button" class="btn btn-link send-btn" onclick="sendMesageToRoom()"> <i class="fa fa-paper-plane"></i></button>
                 </div>
             </div>
 
@@ -66,8 +66,12 @@
     </div>
 </div>
 
-
-
+<!--Chat welcome msg-->
+<div class="media-body" id="chat-welcome" style="display: none">
+    <div class="bg-dark rounded py-2 px-3 mb-2">
+        <p class="text-small mb-0 text-white text-message">Welcome! Select group to start a chat.</p>
+    </div>
+</div>
 
 <script>
     var host = '{{ .gc_host }}'
@@ -79,6 +83,10 @@
         }
 
         $("#chat-box").html("");
+
+        $("#text-to-send").removeAttr("disabled");
+        $(".send-btn").removeAttr("disabled");
+        $("#text-to-send").focus();
 
         $("#groupchat-list > a").each(function() {
             $(this).removeClass("active")
@@ -191,6 +199,15 @@
                 sendMesageToRoom()
             }
         });
+
+        if (conn == undefined) {
+            let welcomeMsgBox = $("#chat-welcome").clone();
+            $(welcomeMsgBox).show()
+
+            $("#chat-box").append(welcomeMsgBox)
+            $("#text-to-send").attr("disabled","true")
+            $(".send-btn").attr("disabled","true")
+        }
     })
 </script>
 

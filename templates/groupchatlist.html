@@ -157,15 +157,16 @@
         let jwtToken = getCookie("access_token")
         let parsedJWT = parseJwt(jwtToken)
 
+        /*
         let objMsg = {
             msg: message,
             user_id: parsedJWT.user_id,
             profile_pic: parsedJWT.profile_pic
         }
 
-        let msg = JSON.stringify(objMsg)
+        let msg = JSON.stringify(objMsg)*/
 
-        conn.send(msg)
+        conn.send(message)
         $("#text-to-send").val("")
     }
 
@@ -205,8 +206,8 @@
             $(welcomeMsgBox).show()
 
             $("#chat-box").append(welcomeMsgBox)
-            $("#text-to-send").attr("disabled","true")
-            $(".send-btn").attr("disabled","true")
+            $("#text-to-send").attr("disabled", "true")
+            $(".send-btn").attr("disabled", "true")
         }
     })
 </script>

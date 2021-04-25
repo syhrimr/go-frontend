@@ -1,15 +1,16 @@
 {{ template "header.html" .}}
 <div class="container">
-    <h1>Room List</h1>
-    <div class="row pt-3" id="group-list"></div>
+    <h1>Explore Rooms</h1>
+    <div class="row pt-3" id="group-list">
+    </div>
 </div>
 
 <div class="col-sm-6 py-2" id="group-card" style="display: none">
     <div class="card shadow">
         <div class="card-body">
-            <h5 class="card-title room-name">Room's name</h5>
-            <p class="card-text room-desc">Room's description</p>
-            <a class="btn btn-primary room-id">Join!</a>
+            <h5 class="card-title room-name">Room Name</h5>
+            <p class="card-text room-desc">Room short description.</p>
+            <a class="btn btn-primary room-id">Join Now</a>
         </div>
     </div>
 </div>
@@ -20,29 +21,35 @@
         $.ajax({
             type: "GET",
             url: host + "/groupchat",
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
             },
-            success: function(data, status, xhr) {
+            success: function (data, status, xhr) {
                 var groupchats = data.data;
                 groupchats.forEach(element => {
-                    let gcCard = $("#group-card").clone()
-                    $(gcCard).removeAttr("id")
-                    $(gcCard).find(".room-name").html(element.name)
-                    $(gcCard).find(".room-desc").html(element.description)
-                    $(gcCard).find(".room-id").attr("onClick", "joinNow("+element.room_id+")")
-                    $("#group-list").append(gcCard)
-                    $(gcCard).show()
+                    // console.log(element.description)
+
+                    let gCard = $("#group-card").clone()
+                    $(gCard).removeAttr("id")
+                    $(gCard).find(".room-name").html(element.name)
+                    $(gCard).find(".room-desc").html(element.description)
+                    $(gCard).find(".room-id").attr("onclick", "joinNow("+element.room_id+")")
+                    $("#group-list").append(gCard);
+
+                    $(gCard).show()
                 });
+
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.log(xhr.responseText)
             },
             dataType: "json"
         })
+
+
     })
 
-    function joinNow(gId) {
+    function joinNow(gId){
         $.ajax({
             type: "PUT",
             url: host + "/groupchat",
@@ -50,12 +57,16 @@
                 xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
             },
             data: "room_id="+gId,
-            success: function(xhr, status, error) {
+            success: function(data, status, xhr) {
                 window.location.href = "/groupchat/list"
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText)
             },
             dataType: "json"
         })
     }
+
 </script>
 
 {{ template "footer.html" .}}

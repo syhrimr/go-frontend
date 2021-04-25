@@ -18,8 +18,13 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 	r.GET("/register", renderRegisterPage)
 	r.GET("/login", renderLoginPage)
+<<<<<<< HEAD
 	r.GET("/groupchat/chat", renderGetJoinedGroupchats)
 	r.GET("/groupchat/list", renderRoomList)
+=======
+	r.GET("/groupchat/list", renderGetJoinedGroupchats)
+	r.GET("/groupchat/explore", renderExplorePage)
+>>>>>>> 4650c47088f1c618aeb548ad17da31239d20ec71
 	r.Static("/css", "./css")
 	r.Run(":80")
 }
@@ -72,4 +77,14 @@ func renderRoomList(c *gin.Context) {
 			"gc_host":      groupchatBackendHost,
 		},
 	)
+}
+
+func renderExplorePage(c *gin.Context)  {
+	c.HTML(http.StatusOK, "explore.html", gin.H{
+		"title":	"Explore Group",
+		"host":		host,
+		"account_host": backendHost,
+		"gc_host":      groupchatBackendHost,
+
+	})
 }

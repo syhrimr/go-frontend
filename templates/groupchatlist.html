@@ -7,12 +7,17 @@
         <!-- Users box-->
         <div class="col-5 px-0 bg-white">
             <div class="bg-white">
-
-                <div class="bg-gray px-4 py-2 bg-light">
-                    <p class="h5 mb-0 py-1">Joined</p>
-                </div>
                 <div class="messages-box">
                     <div class="list-group rounded-0" id="groupchat-list">
+                        <a class="list-group-item list-group-item-action rounded-0" onclick="createRoom(this)">
+                            <div class="media"><img class="room-img" src="https://img.icons8.com/ios/64/000000/create-new.png" alt="user" width="50" class="rounded-circle" style="float: left">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0 room-name">Create Room</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -76,6 +81,12 @@
 <script>
     var host = '{{ .gc_host }}'
     var conn;
+
+
+    // TODO
+    function createRoom() {
+
+    }
 
     function connectRoom(element) {
         if (conn != undefined) {

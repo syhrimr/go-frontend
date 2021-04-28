@@ -31,7 +31,7 @@
             data: $('#loginForm').serialize(),
             success: function(data, status, xhr) {
                 setCookie("access_token", data.data, 365)
-                window.location.href = "/groupchat/list"
+                window.location.href = "/groupchat"
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText)

@@ -9,7 +9,7 @@
             <div class="bg-white">
                 <div class="messages-box">
                     <div class="list-group rounded-0" id="groupchat-list">
-                        <a class="list-group-item list-group-item-action rounded-0" onclick="createRoom(this)">
+                        <a class="list-group-item list-group-item-action rounded-0" onclick="openCreateRoom()">
                             <div class="media"><img class="room-img" src="https://img.icons8.com/ios/64/000000/create-new.png" alt="user" width="50" class="rounded-circle" style="float: left">
                                 <div class="media-body ml-4">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
@@ -71,7 +71,7 @@
     </div>
 </div>
 
-<!--Chat welcome msg-->
+<!-- Chat welcome msg -->
 <div class="media-body" id="chat-welcome" style="display: none">
     <div class="bg-dark rounded py-2 px-3 mb-2">
         <p class="text-small mb-0 text-white text-message">Welcome! Select group to start a chat.</p>
@@ -82,10 +82,8 @@
     var host = '{{ .gc_host }}'
     var conn;
 
-
-    // TODO
-    function createRoom() {
-
+    function openCreateRoom() {
+        window.location.href = "/groupchat/create"
     }
 
     function connectRoom(element) {

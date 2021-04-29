@@ -21,7 +21,9 @@ func main() {
 	r.GET("/groupchat", renderGetJoinedGroupchats)
 	r.GET("/groupchat/explore", renderExplorePage)
 	r.GET("/groupchat/create", renderCreateRoom)
-	r.GET("/groupchat/settings", renderSettings)
+	r.GET("/profile", renderProfile)
+	r.GET("/profile/password", renderChangePassword)
+	r.GET("/profile/username", renderChangeUsername)
 	r.Static("/css", "./css")
 	r.Run(":80")
 }
@@ -87,12 +89,36 @@ func renderCreateRoom(c *gin.Context) {
 		})
 }
 
-func renderSettings(c *gin.Context) {
+func renderProfile(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
-		"settings.html",
+		"profile.html",
 		gin.H{
-			"title":        "Settings",
+			"title":        "Profile",
+			"host":         host,
+			"account_host": accountsBackendHost,
+			"gc_host":      groupchatBackendHost,
+		})
+}
+
+func renderChangePassword(c *gin.Context) {
+	c.HTML(
+		http.StatusOK,
+		"changepassword.html",
+		gin.H{
+			"title":        "Change Password",
+			"host":         host,
+			"account_host": accountsBackendHost,
+			"gc_host":      groupchatBackendHost,
+		})
+}
+
+func renderChangeUsername(c *gin.Context) {
+	c.HTML(
+		http.StatusOK,
+		"changeusername.html",
+		gin.H{
+			"title":        "Change Username",
 			"host":         host,
 			"account_host": accountsBackendHost,
 			"gc_host":      groupchatBackendHost,

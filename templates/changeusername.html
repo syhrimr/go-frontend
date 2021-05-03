@@ -45,6 +45,14 @@
             dataType: "json"
         })
     }
+
+    $(document).ready(function() {
+        $('#text-to-send').keyup(function(e) {
+            if (e.keyCode == 13) {
+                changeUsername()
+            }
+        });
+    })
 </script>
 
 {{ template "footer.html" .}}

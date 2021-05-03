@@ -1,6 +1,6 @@
 {{ template "header.html" .}}
 <div class="container">
-    <h1>Room Chats</h1>
+    <h1>Rooms</h1>
     <ul class="list-group" id="groupchats"></ul>
 
     <div class="row rounded-lg overflow-hidden shadow">
@@ -9,11 +9,11 @@
             <div class="bg-white">
                 <div class="messages-box">
                     <div class="list-group rounded-0" id="groupchat-list">
-                        <a class="list-group-item list-group-item-action rounded-0" onclick="openCreateRoom()">
+                        <a class="list-group-item list-group-item-action rounded-0" onclick="openCreateForm()">
                             <div class="media"><img class="room-img" src="https://img.icons8.com/ios/64/000000/create-new.png" alt="user" width="50" class="rounded-circle" style="float: left">
                                 <div class="media-body ml-4">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <h6 class="mb-0 room-name">Create Room</h6>
+                                        <h6 class="mb-0">Create Room</h6>
                                     </div>
                                 </div>
                             </div>
@@ -24,9 +24,20 @@
         </div>
         <!-- Chat Box-->
         <div class="col-7 px-0">
+            <!-- Room info area  -->
+            <a class="list-group-item list-group-item-action" id="info-group" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <div class="media">
+                    <div class="media-body ml-4">
+                        <div class="justify-content-between mb-1">
+                            <h6 class="mb-0"></h6>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <!-- Chat bubble area -->
             <div class="px-4 py-5 chat-box bg-white" id="chat-box">
             </div>
-
             <!-- Typing area -->
             <div class="input-group">
                 <input type="text" placeholder="Type a message" id="text-to-send" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
@@ -39,11 +50,13 @@
     </div>
 </div>
 
+<!-- Room chat card -->
 <a class="list-group-item list-group-item-action rounded-0" style="display: none;" id="groupchat-item-template" onclick="connectRoom(this)">
-    <div class="media"><img class="room-img" src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle" style="float: left">
+    <div class="media">
+        <img class="room-img" src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle" style="float: left">
         <div class="media-body ml-4">
             <div class="d-flex align-items-center justify-content-between mb-1">
-                <h6 class="mb-0 room-name">Jason Doe</h6>
+                <h6 class="mb-0 room-name"></h6>
             </div>
         </div>
     </div>
@@ -71,18 +84,33 @@
     </div>
 </div>
 
-<!-- Chat welcome msg -->
-<div class="media-body" id="chat-welcome" style="display: none">
-    <div class="bg-dark rounded py-2 px-3 mb-2">
+<!--Chat welcome msg-->
+<div class="media-body" id="chat-welcome" style="display: none; background-color: black; z-index: 1;">
+    <div class="bg-dark rounded py-2 px-3 mb-2" >
         <p class="text-small mb-0 text-white text-message">Welcome! Select group to start a chat.</p>
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Participants</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Put username participants here! -->
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     var host = '{{ .gc_host }}'
-    var conn;
+    var conn
 
-    function openCreateRoom() {
+    function openCreateForm() {
         window.location.href = "/groupchat/create"
     }
 
@@ -91,8 +119,11 @@
             conn.close()
         }
 
+        $("#info-group").show()
         $("#chat-box").html("");
 
+        $("#text-to-send").show()
+        $(".send-btn").show()
         $("#text-to-send").removeAttr("disabled");
         $(".send-btn").removeAttr("disabled");
         $("#text-to-send").focus();
@@ -105,6 +136,10 @@
         let room_id = $(element).attr("room-id")
         $(element).addClass("active")
         $(element).addClass("text-white")
+
+        $("#info-group h6").text($(".active h6").text())
+
+        getParticipants(room_id)
 
         connectionStr = "ws://skilvul-gc.com:90/ws?room_id=" + room_id + "&authToken=" + getCookie("access_token")
 
@@ -172,11 +207,35 @@
             user_id: parsedJWT.user_id,
             profile_pic: parsedJWT.profile_pic
         }
-
         let msg = JSON.stringify(objMsg)*/
 
         conn.send(message)
         $("#text-to-send").val("")
+    }
+
+    function getParticipants(roomID) {
+        $.ajax({
+            type: "GET",
+            url: host + "/participants/"+ roomID,
+            success: function(data, status, xhr) {
+                let party = data.data
+                let count = 0
+
+                $(".modal-body").empty()
+                
+                party.forEach(element => {
+                    count += 1
+
+                    $(".modal-body").append("<p>"+element.username+"</p>")
+                })
+
+                $("#info-group p").text(count+" participants")
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText)
+            },
+            dataType: "json"
+        })
     }
 
     $(document).ready(function() {
@@ -215,8 +274,11 @@
             $(welcomeMsgBox).show()
 
             $("#chat-box").append(welcomeMsgBox)
+            $("#info-group").hide()
             $("#text-to-send").attr("disabled", "true")
+            $("#text-to-send").hide()
             $(".send-btn").attr("disabled", "true")
+            $(".send-btn").hide()
         }
     })
 </script>

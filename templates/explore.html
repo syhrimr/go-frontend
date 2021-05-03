@@ -13,8 +13,8 @@
 <!-- Card for Categories -->
 <div class="card col-md-3" id="category-card" style="width: 18rem; display: none;">
     <div class="card-body">
-        <a class="card-link" href="#">
-            <h5 class="card-title">&#128187; Programming</h5>
+        <a class="card-link" href="#" onclick="getRoomByCategoryID(this)">
+            <h5 class="card-title">Category Name</h5>
         </a>
     </div>
 </div>
@@ -71,15 +71,12 @@
         $.ajax({
             type: "GET",
             url: host+"/explore",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
-            },
             success: function(data, status, xhr) {
                 var categories = data.data
                 categories.forEach(element => {
                     let catCard = $("#category-card").clone()
                     $(catCard).removeAttr("id")
-                    $(catCard).find(".card-link").attr("onclick", "getRoomByCategoryID(" + element.room_category_id + ")")
+                    $(catCard).find(".card-link").attr("category-id", element.room_category_id)
                     $(catCard).find(".card-title").html(element.name)
                     $("#category-list").append(catCard)
                     $(catCard).show()
@@ -92,7 +89,16 @@
         })
     }
 
-    function getRoomByCategoryID(category_id) {
+    function getRoomByCategoryID(element) {
+        $(".card-link").each(function() {
+            $(this).removeClass("active")
+            $(this).removeClass("text-dark")
+        })
+
+        let category_id = $(element).attr("category-id")
+        $(element).addClass("active")
+        $(element).addClass("text-dark")        
+
         $.ajax({
             type: "GET",
             url: host+"/explore/"+category_id,

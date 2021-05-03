@@ -7,7 +7,7 @@
   <div class="card-body user-card">
     <div class="row">
       <div class="col-sm-3"><h6 class="mb-0">Username</h6></div>
-      <div class="col-sm-5" id="username">Kenneth</div>
+      <div class="col-sm-5" id="username"></div>
       <div class="col-sm-4"><a href="profile/username">Change Username</a></div>
     </div>
     <hr>
@@ -32,12 +32,14 @@
       type: "GET",
       url: host + "/user/info",
       beforeSend: function(xhr) {
-          xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
+        xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
       },
       success: function(data, status, xhr) {
-          let user = data.data
-          $("#username").text(user.username)
-          $("#created-at").text(user.created_at)
+        let user = data.data
+        
+        console.log(user.username)
+        $("#username").text(user.username)
+        $("#created-at").text(user.created_at)
       },
       error: function(xhr, status, error) {
           console.log(xhr.responseText)

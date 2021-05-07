@@ -14,6 +14,12 @@
                     <label class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password">
                 </div>
+                <!-- Error Alert -->
+                <div id="alert-box">
+                    <div class="alert alert-danger alert-dismissible fade show" style="display: none;">
+                        <strong>Error!</strong><p class="error-message">A problem has been occurred while submitting your data.</p>
+                    </div>
+                </div>
                 <input type="hidden" id="host" value="{{ .account_host}}">
                 <button type="button" class="btn btn-primary" onclick="login()">Login</button>
             </form>
@@ -22,6 +28,14 @@
 
 </div>
 <script>
+    $(document).ready(function() {
+        $('#text-to-send').keyup(function(e) {
+            if (e.keyCode == 13) {
+                login()
+            }
+        });
+    })
+
     function login() {
         var host = '{{ .account_host }}'
 
@@ -34,19 +48,12 @@
                 window.location.href = "/groupchat"
             },
             error: function(xhr, status, error) {
-                console.log(xhr.responseText)
+                $(".error-message").text(xhr.responseText)
+                $(".alert").show()
             },
             dataType: "json"
         })
     }
-
-    $(document).ready(function() {
-        $('#text-to-send').keyup(function(e) {
-            if (e.keyCode == 13) {
-                login()
-            }
-        });
-    })
 </script>
 
 {{ template "footer.html" .}}

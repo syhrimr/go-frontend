@@ -25,16 +25,21 @@
         <!-- Chat Box-->
         <div class="col-7 px-0">
             <!-- Room info area  -->
-            <a class="list-group-item list-group-item-action" id="info-group" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <div class="media">
-                    <div class="media-body ml-4">
-                        <div class="justify-content-between mb-1">
-                            <h6 class="mb-0"></h6>
-                            <p></p>
+            <div class="flex-row list-group-item list-group-item-action" id="info-group">
+                <a class="text-no-decor" data-bs-toggle="modal" data-bs-target="#seeParticipants">
+                    <div class="media">
+                        <div class="media-body ml-4">
+                            <div class="justify-content-between mb-1">
+                                <h6 class="mb-0"></h6>
+                                <p>...</p>
+                            </div>
                         </div>
                     </div>
+                </a>
+                <div class="btn-close-container">
+                    <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#leaveRoom" aria-label="Close"></button>
                 </div>
-            </a>
+            </div>
             <!-- Chat bubble area -->
             <div class="px-4 py-5 chat-box bg-white" id="chat-box">
             </div>
@@ -91,20 +96,35 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal to show participants -->
+<div class="modal fade" id="seeParticipants" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Participants</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Participants</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-participants">
+            <!-- Put username participants here! -->
+            </div>
         </div>
-        <div class="modal-body">
-          <!-- Put username participants here! -->
-        </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<!-- Modal to confirm leave group -->
+<div class="modal fade" id="leaveRoom" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are you sure want to leave?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="leave-yes btn btn-danger">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     var host = '{{ .gc_host }}'
@@ -221,15 +241,32 @@
                 let party = data.data
                 let count = 0
 
-                $(".modal-body").empty()
+                $(".modal-participants").empty()
                 
                 party.forEach(element => {
                     count += 1
 
-                    $(".modal-body").append("<p>"+element.username+"</p>")
+                    $(".modal-participants").append("<p>"+element.username+"</p>")
                 })
 
                 $("#info-group p").text(count+" participants")
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText)
+            },
+            dataType: "json"
+        })
+    }
+    
+    function leaveRoom(roomID) {
+        $.ajax({
+            type: "PUT",
+            url: host + "/groupchat/" + roomID,
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
+            },
+            success: function(data) {
+                window.location.reload(true)
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText)
@@ -246,16 +283,20 @@
                 xhr.setRequestHeader("X-Access-Token", getCookie("access_token"))
             },
             success: function(data, status, xhr) {
-                var groupchats = data.data;
-                groupchats.forEach(element => {
+                var groupchats = data.data
+                
+                if (groupchats != null) {
+                    groupchats.forEach(element => {
                     var gcItem = $("#groupchat-item-template").clone()
-                    $(gcItem).removeAttr("id")
-                    $(gcItem).find(".room-name").html(element.name)
-                    $(gcItem).attr("room-id", element.room_id)
-                    $("#groupchat-list").append(gcItem)
-                    $(gcItem).show()
-                });
-
+                        $(gcItem).removeAttr("id")
+                        $(gcItem).find(".room-name").html(element.name)
+                        $(gcItem).attr("room-id", element.room_id)
+                        $("#groupchat-list").append(gcItem)
+                        $(gcItem).show()
+    
+                        $(".leave-yes").attr("onclick", "leaveRoom("+ element.room_id + ")")
+                    })
+                }
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText)

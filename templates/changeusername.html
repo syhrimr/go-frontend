@@ -10,8 +10,8 @@
                     <label class="form-label">New Username</label>
                     <input type="text" class="form-control" id="username" name="username">
                 </div>
+                <!-- Error Alert -->
                 <div id="alert-box">
-                    <!-- Error Alert -->
                     <div class="alert alert-danger alert-dismissible fade show" style="display: none;">
                         <strong>Error!</strong><p class="error-message">A problem has been occurred while submitting your data.</p>
                     </div>
@@ -40,7 +40,6 @@
             error: function(xhr, status, error) {
                 $(".error-message").text(xhr.responseText)
                 $(".alert").show()
-                console.log(xhr.responseText)
             },
             dataType: "json"
         })
